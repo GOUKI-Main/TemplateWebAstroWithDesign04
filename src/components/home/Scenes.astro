@@ -1,0 +1,63 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import SectionHead from "../ui/SectionHead.astro";
+import buntRed from "../../assets/images/deco/bunt_red.webp";
+import buntYellow from "../../assets/images/deco/bunt_yellow.webp";
+
+// 利用シーン・おすすめ。小さなアイコン + 手書きの題、本文、白フチの写真。
+type Card = {
+  icon: ImageMetadata;
+  title: string;
+  desc: string;
+  image: ImageMetadata;
+  alt: string;
+};
+type Props = { heading: string; en?: string; cards: Card[] };
+const { heading, en, cards } = Astro.props;
+---
+
+<section id="scenes" class="bg-surface pt-6 pb-14 sm:pb-[84px]">
+  <div class="container-page">
+    <SectionHead heading={heading} en={en}>
+      <div
+        class="-mt-1.5 mb-7 flex justify-center"
+        aria-hidden="true"
+        slot="deco"
+        data-pop
+      >
+        <Image src={buntRed} alt="" class="h-[38px] w-auto opacity-90" />
+        <Image src={buntYellow} alt="" class="h-[38px] w-auto opacity-90" />
+      </div>
+    </SectionHead>
+    <div
+      class="mx-auto grid max-w-[560px] gap-[18px] lg:max-w-none lg:grid-cols-3 lg:gap-6"
+      data-reveal-child
+    >
+      {
+        cards.map((c) => (
+          <article class="lift rounded-[14px] border border-border bg-bg px-[22px] pt-[22px] pb-6 shadow-[0_5px_0_rgba(223,204,178,0.5)]">
+            <div class="mb-4 flex items-center gap-3">
+              <span class="flex h-[46px] w-[46px] flex-none items-center justify-center">
+                <Image src={c.icon} alt="" class="max-h-[42px] w-auto" />
+              </span>
+              <h3 class="m-0 font-hand text-[23px] font-normal">{c.title}</h3>
+            </div>
+            <div class="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:gap-4">
+              <p class="m-0 flex-1 text-[12.5px] leading-[1.9] text-pretty text-muted">
+                {c.desc}
+              </p>
+              <Image
+                src={c.image}
+                alt={c.alt}
+                widths={[300, 500]}
+                sizes="(min-width: 640px) 142px, 90vw"
+                class="h-[170px] w-full flex-none rounded-[10px] border-[3px] border-card object-contain shadow-[0_5px_12px_rgba(59,39,26,0.12)] sm:h-[132px] sm:w-[142px]"
+              />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -24,8 +24,10 @@
 番号の欠番には2種類あります。B5・B6・B8、C8・C9・C11、D1、§3.3、§5-6 は、
 テンプレート化の際に削除したブログ機能（関連記事・ページネーション・RSS・表の
 横スクロール・ヒーロー画像・タグアーカイブ・ブログ一式）のものです。C6 と
-§3.2-f（セルフホストフォント）は、フォントのライセンス文を同梱する手間を
-なくすため、システムフォントに置き換えたので欠番です。
+§3.2-f（旧セルフホストフォント）は欠番のままで、デザイン付きにした際の書体は
+D2 として新しく足しました。C7（ダークモード）と §3.2-g は、デザインがライト
+専用になったため削除済みで欠番です。デザイン付きにした際に足したものは D 系
+（§1.4・§3.4）にまとめています。
 
 ---
 
@@ -53,20 +55,20 @@
 
 ### 1.2 独立して消せる
 
-| #   | 機能                      | 既定 | 実体                                                           | 手順   |
-| --- | ------------------------- | ---- | -------------------------------------------------------------- | ------ |
-| B1  | Cloudflare Web Analytics  | env  | `src/components/Cloudflare.astro`                              | §3.1-a |
-| B2  | Search Console 認証メタ   | env  | `src/components/SEO.astro` の `gscVerification`                | §3.1-b |
-| B3  | リンク先読み（唯一の JS） | ON   | `astro.config.mjs` の `prefetch:`                              | §3.1-c |
-| B4  | FAQ（`<details>`）        | ON   | `src/components/FAQ.astro`                                     | §3.1-d |
-| B7  | モバイルメニュー          | ON   | `src/components/Header.astro` の `<details class="md:hidden">` | §3.1-g |
-| B9  | `robots.txt`              | ON   | `src/pages/robots.txt.ts`                                      | §3.1-i |
-| B10 | LocalBusiness + NAP 表示  | OFF  | `site.ts` の `business:`、`BusinessInfo.astro`、`jsonld.ts`    | §3.1-j |
-| B11 | セキュリティヘッダ        | ON   | `public/_headers`                                              | §3.1-k |
-| B12 | 内部リンク検査            | ON   | `scripts/check-links.mjs`                                      | §3.1-l |
-| B13 | 単体テスト（Vitest）      | ON   | `src/**/*.test.ts`、`vitest.config.ts`                         | §3.1-m |
-| B14 | reduced-motion 対応       | ON   | `src/styles/global.css` の `prefers-reduced-motion`            | §3.1-n |
-| B15 | スキップリンク            | ON   | `src/components/SkipLink.astro`                                | §3.1-o |
+| #   | 機能                     | 既定 | 実体                                                           | 手順   |
+| --- | ------------------------ | ---- | -------------------------------------------------------------- | ------ |
+| B1  | Cloudflare Web Analytics | env  | `src/components/Cloudflare.astro`                              | §3.1-a |
+| B2  | Search Console 認証メタ  | env  | `src/components/SEO.astro` の `gscVerification`                | §3.1-b |
+| B3  | リンク先読み（JS）       | ON   | `astro.config.mjs` の `prefetch:`                              | §3.1-c |
+| B4  | FAQ（`<details>`）       | ON   | `src/components/FAQ.astro`                                     | §3.1-d |
+| B7  | モバイルメニュー         | ON   | `src/components/Header.astro` の `<details class="md:hidden">` | §3.1-g |
+| B9  | `robots.txt`             | ON   | `src/pages/robots.txt.ts`                                      | §3.1-i |
+| B10 | LocalBusiness + NAP 表示 | OFF  | `site.ts` の `business:`、`BusinessInfo.astro`、`jsonld.ts`    | §3.1-j |
+| B11 | セキュリティヘッダ       | ON   | `public/_headers`                                              | §3.1-k |
+| B12 | 内部リンク検査           | ON   | `scripts/check-links.mjs`                                      | §3.1-l |
+| B13 | 単体テスト（Vitest）     | ON   | `src/**/*.test.ts`、`vitest.config.ts`                         | §3.1-m |
+| B14 | reduced-motion 対応      | ON   | `src/styles/global.css` の `prefers-reduced-motion`            | §3.1-n |
+| B15 | スキップリンク           | ON   | `src/components/SkipLink.astro`                                | §3.1-o |
 
 ### 1.3 消せるが手当てが要る
 
@@ -77,13 +79,27 @@
 | C3  | サイトマップ                  | ON   | `astro.config.mjs` の `sitemap({`                  | §3.2-c | `robots.txt` の `Sitemap:` 行も |
 | C4  | noindex 制御                  | ON※  | `site.ts` の `noindexPaths`                        | §3.2-d | 判定は共通関数に集約済み        |
 | C5  | theme-color                   | ON   | `SEO.astro` の `theme-color`、`site.ts`            | §3.2-e | webmanifest も同じ値を読む      |
-| C7  | ダークモード                  | ON   | `global.css` の `prefers-color-scheme: dark`       | §3.2-g | `themeColorDark` も一緒に       |
 | C10 | パンくず（表示）              | OFF  | `src/components/Breadcrumbs.astro`                 | §3.2-j | 下層ページ用。現状は未使用      |
 | C12 | JSON-LD 構造化データ          | ON   | `src/lib/seo/jsonld.ts`                            | §3.2-l | パンくず表示は無修正で残せる    |
 
 ※ C4 は配線済みだが `noindexPaths: []` なので既定では何も起きない。
 
 ---
+
+### 1.4 デザイン（デザイン付きにした際に追加）
+
+| #   | 機能                                | 既定 | 実体                                                                                  | 手順   |
+| --- | ----------------------------------- | ---- | ------------------------------------------------------------------------------------- | ------ |
+| D2  | 書体（Astro Fonts API・4書体）      | ON   | `astro.config.mjs` の `fonts:`、`Base.astro` の `<Font`、`global.css` の `--font-raw` | §3.4-a |
+| D3  | スクロールの動き + ヘッダー出し入れ | ON   | `src/scripts/motion.ts`、`global.css` の「動き」、`Base.astro` の `js-motion`         | §3.4-b |
+| D4  | 初回のオープニング                  | ON   | `src/components/Loader.astro`、`site.ts` の `design.loader`                           | §3.4-c |
+| D5  | スマホ下部の常駐バー                | ON   | `src/components/MobileBar.astro`、`site.ts` の `design.mobileBar`                     | §3.4-d |
+| D6  | 紙の質感                            | ON   | `global.css` の `body::before`                                                        | §3.4-e |
+| D7  | 見本の写真・ロゴ                    | ON   | `src/assets/images/sample/`、`Logo.astro`、`index.astro` の import                    | §3.4-f |
+
+D1 は欠番（§0）。トップの各節（`src/components/home/`）は `index.astro` から
+`<Items>` などを1行消せば外れます（店舗情報 `<Info>` は `site.business` が無ければ
+自動で出ません）。
 
 ## 2. 検証済みの削除パターン
 
@@ -130,9 +146,10 @@ Analytics、GSC メタ、theme-color、ダークモード。
    `{ gscVerification && ( … ) }` ブロックを削除
 2. `src/content/site.ts` の `seo.googleSiteVerification`（型とコメント）を削除
 
-#### c. リンク先読み（唯一のランタイム JS）
+#### c. リンク先読み（ランタイム JS）
 
-`astro.config.mjs` の `prefetch: { … }` を削除。これで JS 出力がゼロになります。
+`astro.config.mjs` の `prefetch: { … }` を削除。JS の出力は動き（D3）だけに
+なります。D3 も消せば JS 出力がゼロになります。
 個別のリンクだけ残したい場合は `prefetch: { prefetchAll: false }` にして
 `data-astro-prefetch` を付ける運用に切り替え。
 
@@ -261,15 +278,6 @@ Analytics、GSC メタ、theme-color、ダークモード。
    `theme_color` / `background_color` に使っている** ので、PWA を残すなら
    リテラルに置き換える
 
-#### g. ダークモード
-
-1. `src/styles/global.css`: `@media (prefers-color-scheme: dark) { :root { … } }`
-   を削除し、`color-scheme: light dark` を `light` に変更
-2. `src/content/site.ts`: `seo.themeColorDark` を削除
-3. `src/components/SEO.astro`: `themeColorDark` の props と、2本立ての
-   `theme-color` を単一の `<meta name="theme-color" content={themeColor} />` に
-4. `public/_headers` などに記載はなし
-
 #### j. パンくず（表示）
 
 1. `src/components/Breadcrumbs.astro` を削除（`Base.astro` が型
@@ -303,6 +311,45 @@ Analytics、GSC メタ、theme-color、ダークモード。
 > パンくずの表示は維持。
 
 ---
+
+### 3.4 デザインの部品
+
+#### a. 書体（D2）
+
+1. `astro.config.mjs` の `fonts: [ … ]` と `fontProviders` の import を削除
+2. `src/layouts/Base.astro` の `<Font … />` 4行と `import { Font }` を削除
+3. `src/styles/global.css` の `--font-*` から `var(--font-raw-*)` を外す
+   （後ろのシステムフォントだけが残る）
+4. `LICENSE-FONTS.md` を削除
+
+#### b. スクロールの動き（D3）
+
+1. `src/layouts/Base.astro` の head の inline script と、body 末尾の
+   `<script>import { initMotion } …</script>` を削除
+2. `src/scripts/motion.ts` を削除
+3. `data-reveal` などの属性は残っていても無害（`.js-motion` が付かないので
+   何も伏せない）。気になるなら一括で消す
+4. ヘッダーの出し入れも一緒に止まる。ループする装飾（`anim-*`）は CSS だけ
+   なので残る
+
+#### c. 初回のオープニング（D4）
+
+`site.ts` の `design.loader` を `false` にするだけでよい。丸ごと消すなら
+`Loader.astro` と `Base.astro` の `<Loader />`、inline script の
+`loader` 部分、`global.css` の `.loader-on` を削除。
+
+#### d. スマホ下部の常駐バー（D5）
+
+`site.ts` の `design.mobileBar` を `false`。
+
+#### e. 紙の質感（D6）
+
+`global.css` の `body::before { … }` を削除。CSP の `img-src data:` も不要になる。
+
+#### f. 見本の写真・ロゴ（D7）
+
+セットアップで差し替えたら `src/assets/images/sample/` を丸ごと削除する。
+`pnpm build` が通れば参照は残っていない（残っていれば import エラーになる）。
 
 ## 4. 消す前のチェック
 
@@ -395,14 +442,14 @@ URL がビルド出力に存在するかを照合するようにしました。H
 
 `site.ts` の `seo.themeColor` を読んでいる先が3つあります。
 
-| 読み手                                        | 用途                                      |
-| --------------------------------------------- | ----------------------------------------- |
-| `SEO.astro`                                   | `<meta name="theme-color">`（light/dark） |
-| `site.webmanifest.ts`                         | `theme_color` と `background_color`       |
-| （`global.css` の `--color-bg` と手動で同期） | 実際の背景色                              |
+| 読み手                                        | 用途                                |
+| --------------------------------------------- | ----------------------------------- |
+| `SEO.astro`                                   | `<meta name="theme-color">`         |
+| `site.webmanifest.ts`                         | `theme_color` と `background_color` |
+| （`global.css` の `--color-bg` と手動で同期） | 実際の背景色                        |
 
-「ダークモードを消す」「PWA を消す」「theme-color を消す」の3つが同じ設定値を
-共有しているため、消す範囲が重なります。特に **PWA を残して theme-color だけ
+「PWA を消す」「theme-color を消す」の2つが同じ設定値を共有しているため、
+消す範囲が重なります。特に **PWA を残して theme-color だけ
 消す**と `site.webmanifest.ts` が未定義を出力します。
 
 - **回避策**: §3.2-e の手順3

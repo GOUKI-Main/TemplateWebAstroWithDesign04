@@ -2,33 +2,48 @@
 // Accessible FAQ using native <details>/<summary>. (§7)
 // NOTE: Google removed FAQ rich results (2026-05), so this is for user value
 // and page understanding — not for a rich-result snippet. No FAQPage JSON-LD.
+import SectionHead from "./ui/SectionHead.astro";
+
 type QA = { q: string; a: string };
-const { items, heading = "よくある質問" } = Astro.props as {
+const {
+  items,
+  heading = "よくある質問",
+  en = "FAQ",
+} = Astro.props as {
   items: QA[];
   heading?: string;
+  en?: string;
 };
 ---
 
-<section class="mt-14" aria-labelledby="faq-heading">
-  <h2 id="faq-heading" class="text-xl font-semibold tracking-tight">
-    {heading}
-  </h2>
-  <div class="mt-4 border-t border-border">
-    {
-      items.map((item) => (
-        <details class="group border-b border-border">
-          <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-medium marker:content-['']">
-            {item.q}
-            <span
-              class="text-muted transition-transform group-open:rotate-45"
-              aria-hidden="true"
-            >
-              +
-            </span>
-          </summary>
-          <p class="pb-4 text-muted">{item.a}</p>
-        </details>
-      ))
-    }
+<section class="bg-bg-2 py-14 sm:py-20" aria-labelledby="faq-heading">
+  <div class="container-page max-w-3xl">
+    <SectionHead heading={heading} en={en} id="faq-heading" />
+    <div class="flex flex-col gap-3" data-reveal-child>
+      {
+        items.map((item) => (
+          <details class="card group open:shadow-none">
+            <summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-4 font-bold marker:content-[''] sm:px-5">
+              <span
+                class="en flex h-8 w-8 flex-none items-center justify-center rounded-full bg-accent text-sm text-card"
+                aria-hidden="true"
+              >
+                Q
+              </span>
+              <span class="flex-1">{item.q}</span>
+              <span
+                class="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-sun text-fg transition-transform duration-300 group-open:rotate-45"
+                aria-hidden="true"
+              >
+                +
+              </span>
+            </summary>
+            <p class="m-0 border-t border-dashed border-border px-4 py-4 pl-[3.75rem] text-[0.92rem] text-muted sm:px-5 sm:pl-[4.25rem]">
+              {item.a}
+            </p>
+          </details>
+        ))
+      }
+    </div>
   </div>
 </section>

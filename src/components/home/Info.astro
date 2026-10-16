@@ -1,0 +1,116 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { site } from "../../content/site";
+import BusinessInfo from "../BusinessInfo.astro";
+import slices from "../../assets/images/deco/i_slices.webp";
+import car from "../../assets/images/deco/car.webp";
+import dashed from "../../assets/images/deco/dashed.webp";
+import bus from "../../assets/images/deco/bus.webp";
+
+// 店舗情報とアクセス。site.business が無いサイトでは何も出さない（店舗情報も
+// 地図も、ページに直書きしない — JSON-LD と同じ1か所から出す）。
+type Props = {
+  /** アクセス欄に添える外観写真（ポラロイド風）。 */
+  photo?: { src: ImageMetadata; alt: string; caption?: string };
+};
+const { photo } = Astro.props;
+const b = site.business;
+---
+
+{
+  b && (
+    <section id="info" class="deco-clip bg-surface pt-8 pb-14 sm:pb-20">
+      <div class="container-page grid items-start gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-[54px]">
+        <div>
+          <div class="mb-5 flex items-baseline gap-3.5 border-b-2 border-border pb-3.5">
+            <Image src={slices} alt="" class="h-[34px] w-auto self-center" />
+            <h2 class="m-0 font-hand text-[26px] font-normal" data-reveal>
+              店舗情報
+            </h2>
+            <span class="en text-xs text-muted">Shop Info</span>
+          </div>
+          <BusinessInfo />
+        </div>
+
+        <div>
+          <div class="mb-5 flex items-baseline gap-3.5 border-b-2 border-border pb-3.5">
+            <Image src={car} alt="" class="h-[34px] w-auto self-center" />
+            <h2 class="m-0 font-hand text-[26px] font-normal" data-reveal>
+              アクセス
+            </h2>
+            <span class="en text-xs text-muted">Access</span>
+          </div>
+          {b.access && b.access.length > 0 && (
+            <ul
+              class="m-0 mb-4 list-none p-0 text-[14.5px] leading-[2] text-muted"
+              data-reveal-child
+            >
+              {b.access.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          )}
+          {b.mapEmbedUrl ? (
+            <div
+              class="photo-frame h-[200px] overflow-hidden sm:h-[230px]"
+              data-img-reveal
+            >
+              <iframe
+                src={b.mapEmbedUrl}
+                title={`${site.name}の地図`}
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                class="h-full w-full border-0"
+              />
+            </div>
+          ) : (
+            b.hasMap && (
+              <a
+                href={b.hasMap}
+                target="_blank"
+                rel="noopener"
+                class="btn-pill"
+                data-reveal
+              >
+                Google マップで見る
+                <span class="btn-arrow" aria-hidden="true">
+                  ▶
+                </span>
+              </a>
+            )
+          )}
+          <div class="mt-6 flex flex-col items-center gap-6 sm:flex-row sm:items-end sm:gap-[18px]">
+            {photo && (
+              <figure
+                data-reveal
+                class="relative m-0 w-[min(78%,240px)] flex-none -rotate-3 rounded bg-card px-2.5 pt-2.5 pb-9 shadow-[0_8px_20px_rgba(59,39,26,0.16)] sm:w-[200px]"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  widths={[240, 480]}
+                  sizes="240px"
+                  class="w-full rounded-sm"
+                />
+                {photo.caption && (
+                  <figcaption class="absolute inset-x-0 bottom-2 text-center font-hand text-[13px] text-fg">
+                    {photo.caption}
+                  </figcaption>
+                )}
+              </figure>
+            )}
+            <div class="relative w-full flex-1 pb-2.5" aria-hidden="true">
+              <Image src={dashed} alt="" class="w-full opacity-50" />
+              <Image
+                src={bus}
+                alt=""
+                class="anim-bob absolute right-[30px] bottom-[30px] w-20"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { site as siteConfig } from "./src/content/site";
@@ -29,6 +29,50 @@ export default defineConfig({
       filter: (page) =>
         !isNoindexPath(new URL(page).pathname, siteConfig.seo.noindexPaths),
     }),
+  ],
+  // Design fonts, self-hosted: Astro downloads them from Google Fonts at build
+  // time and serves them from /_astro/fonts, so the browser never talks to a
+  // third party (font-src 'self' in the CSP is enough). Japanese faces are
+  // split into unicode-range subsets, so a page only pulls the glyphs it uses.
+  // All four are SIL Open Font License 1.1 — see LICENSE-FONTS.md.
+  // The cssVariable names are the *raw* families; global.css builds the
+  // Tailwind font tokens (font-sans / font-head / font-hand / font-en) on top
+  // of them with system fallbacks. Change a face here and the whole site
+  // follows. (CLAUDE.md 第2部「書体」)
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: "Zen Kaku Gothic Antique",
+      cssVariable: "--font-raw-body",
+      weights: [400, 500, 700],
+      styles: ["normal"],
+      fallbacks: ["sans-serif"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Kaisei Decol",
+      cssVariable: "--font-raw-head",
+      weights: [500, 700],
+      styles: ["normal"],
+      fallbacks: ["serif"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Yomogi",
+      cssVariable: "--font-raw-hand",
+      weights: [400],
+      styles: ["normal"],
+      fallbacks: ["cursive"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Josefin Sans",
+      cssVariable: "--font-raw-en",
+      weights: [400, 600, 700],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["sans-serif"],
+    },
   ],
   vite: {
     plugins: [tailwindcss()],

@@ -1,0 +1,50 @@
+---
+import { site } from "../content/site";
+
+// 画面下に常駐する導線（狭い画面のみ。yohaku-koumuten の MobileBar を踏襲）。
+// 電話（site.business.telephone）とヘッダーの CTA。どちらも無ければ出さない。
+const tel = site.business?.telephone;
+const cta = site.cta;
+const show = site.design.mobileBar && (tel || cta);
+---
+
+{
+  show && (
+    <>
+      <div
+        class:list={[
+          "fixed inset-x-0 bottom-0 z-30 grid border-t border-border bg-surface/95 backdrop-blur-[6px] lg:hidden",
+          tel && cta ? "grid-cols-2" : "grid-cols-1",
+        ]}
+      >
+        {tel && (
+          <a
+            href={`tel:${tel}`}
+            class="flex min-h-14 items-center justify-center gap-2 text-sm font-bold text-fg no-underline"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="h-4 w-4 fill-current"
+              aria-hidden="true"
+            >
+              <path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z" />
+            </svg>
+            電話する
+          </a>
+        )}
+        {cta && (
+          <a
+            href={cta.href}
+            target={cta.external ? "_blank" : undefined}
+            rel={cta.external ? "noopener" : undefined}
+            class="flex min-h-14 items-center justify-center gap-2 bg-link text-sm font-bold text-on-deep no-underline"
+          >
+            {cta.label}
+          </a>
+        )}
+      </div>
+      {/* 常駐バーの下に本文（フッター）が隠れないよう、その高さぶん空ける。 */}
+      <div class="h-14 bg-deep lg:hidden" aria-hidden="true" />
+    </>
+  )
+}

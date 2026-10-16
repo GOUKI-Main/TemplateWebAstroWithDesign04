@@ -1,0 +1,39 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { site } from "../content/site";
+// TODO(setup): Q10 ロゴ画像（横長の透過PNG/WebP）。src/assets/images/ に置いて
+// この import を差し替える。ロゴが無いなら `logo` を undefined にすると、
+// サイト名を見出し書体で組んだ文字ロゴになる。
+import sampleLogo from "../assets/images/sample/logo.webp";
+
+const logo: ImageMetadata | undefined = sampleLogo;
+
+const { class: className, onDeep = false } = Astro.props as {
+  class?: string;
+  /** フッターなど濃い面の上。画像ロゴは白抜きにする。 */
+  onDeep?: boolean;
+};
+---
+
+{
+  logo ? (
+    <Image
+      src={logo}
+      alt={site.name}
+      width={Math.min(logo.width, 360)}
+      class:list={["w-auto", onDeep && "brightness-0 invert", className]}
+      loading="eager"
+    />
+  ) : (
+    <span
+      class:list={[
+        "font-head font-bold tracking-[0.08em]",
+        onDeep ? "text-on-deep" : "text-fg",
+        className,
+      ]}
+    >
+      {site.name}
+    </span>
+  )
+}

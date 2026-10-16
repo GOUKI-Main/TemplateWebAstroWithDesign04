@@ -1,0 +1,73 @@
+---
+import { Image } from "astro:assets";
+import { site } from "../../content/site";
+import { formatTel } from "../../lib/format";
+import spark from "../../assets/images/deco/spark_r.webp";
+
+// 締めの帯（yohaku-koumuten の CtaBand をテルメの色で）。こげ茶の面に手書きの
+// 一言、主導線はヘッダーと同じ CTA、副導線は電話。各ページの終わりに一つ。
+type Props = {
+  heading?: string;
+  note?: string;
+};
+const {
+  heading = "お気軽にお問い合わせください",
+  note = "ご質問・ご相談は、フォームまたはお電話で承ります。",
+} = Astro.props;
+const cta = site.cta;
+const tel = site.business?.telephone;
+---
+
+<section class="deco-clip relative bg-deep text-on-deep">
+  <Image
+    src={spark}
+    alt=""
+    class="anim-twinkle absolute top-8 right-[6%] hidden w-16 opacity-60 brightness-0 invert md:block"
+  />
+  <div
+    class="container-page grid gap-8 py-14 sm:py-20 lg:grid-cols-[1.4fr_1fr] lg:items-center"
+  >
+    <div>
+      <h2
+        data-reveal
+        class="m-0 font-hand text-[1.45rem] leading-snug font-normal tracking-[0.04em] text-balance sm:text-[2rem] sm:tracking-[0.06em]"
+      >
+        {heading}
+      </h2>
+      <p
+        data-reveal
+        style="--d:80ms"
+        class="mt-4 mb-0 max-w-md text-sm leading-[2] text-on-deep-muted"
+      >
+        {note}
+      </p>
+    </div>
+    <div data-reveal-child class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+      {
+        cta && (
+          <a
+            href={cta.href}
+            target={cta.external ? "_blank" : undefined}
+            rel={cta.external ? "noopener" : undefined}
+            class="btn-pill bg-sun text-fg hover:bg-card"
+          >
+            <span>{cta.label}</span>
+            <span class="btn-arrow bg-fg text-sun" aria-hidden="true">
+              ▶
+            </span>
+          </a>
+        )
+      }
+      {
+        tel && (
+          <a
+            href={`tel:${tel}`}
+            class="btn-line border-on-deep/40 text-on-deep hover:border-sun hover:text-sun"
+          >
+            電話 {formatTel(tel)}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

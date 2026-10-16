@@ -1,65 +1,66 @@
 ---
 import { site } from "../content/site";
+import { formatOpeningHours, formatTel } from "../lib/format";
 
 // Visible NAP (Name / Address / Phone) for local businesses. Renders only when
 // site.business is set — the same single source that drives the LocalBusiness
-// JSON-LD, so structured data and the visible text always match. (§4 MEO)
+// JSON-LD, so structured data and the visible text always match: the hours
+// and phone are *derived* from the JSON-LD values (src/lib/format.ts), never
+// typed twice. (§4 MEO)
+const { showName = false } = Astro.props as {
+  /** Print the business name above the table (pages other than the home). */
+  showName?: boolean;
+};
 const b = site.business;
-const address = b?.address
-  ? [
-      b.address.streetAddress,
-      b.address.addressLocality,
-      b.address.addressRegion,
-      b.address.postalCode,
-      b.address.addressCountry,
-    ]
-      .filter(Boolean)
-      .join(", ")
-  : null;
+const address = b?.address;
+
+const rows: { label: string; text?: string; tel?: string }[] = [];
+if (b?.openingHours?.length)
+  rows.push({
+    label: "営業時間",
+    text: b.openingHours.map(formatOpeningHours).join("\n"),
+  });
+if (b?.closedDays) rows.push({ label: "定休日", text: b.closedDays });
+if (address)
+  rows.push({
+    label: "住所",
+    text: `〒${address.postalCode}\n${address.addressRegion ?? ""}${address.addressLocality}${address.streetAddress}`,
+  });
+if (b?.telephone) rows.push({ label: "電話番号", tel: b.telephone });
+for (const note of b?.notes ?? [])
+  rows.push({ label: note.label, text: note.value });
 ---
 
 {
   b && (
-    <section class="not-prose mt-8 text-sm" aria-label="事業者情報">
-      <p class="m-0 font-semibold text-fg">{b.legalName ?? site.name}</p>
-      <dl class="mt-2 grid gap-1 text-muted">
-        {address && (
-          <div>
-            <dt class="sr-only">住所</dt>
-            <dd class="m-0">{address}</dd>
-          </div>
-        )}
-        {b.telephone && (
-          <div>
-            <dt class="sr-only">電話番号</dt>
-            <dd class="m-0">
-              <a class="tap-target hover:text-link" href={`tel:${b.telephone}`}>
-                {b.telephone}
-              </a>
+    <section class="not-prose" aria-label="店舗情報">
+      {showName && (
+        <p class="m-0 mb-2 font-bold text-fg">{b.legalName ?? site.name}</p>
+      )}
+      <dl class="m-0" data-reveal-child>
+        {rows.map((row) => (
+          <div class="grid grid-cols-[6.5rem_1fr] gap-3 border-b border-dashed border-border py-3 text-[0.9rem] sm:grid-cols-[7.5rem_1fr]">
+            <dt class="flex items-center gap-2 font-bold text-fg">
+              <span
+                class="h-[7px] w-[7px] flex-none rounded-full bg-accent"
+                aria-hidden="true"
+              />
+              {row.label}
+            </dt>
+            <dd class="m-0 whitespace-pre-line text-muted">
+              {row.tel ? (
+                <a
+                  class="tap-target text-muted hover:text-link"
+                  href={`tel:${row.tel}`}
+                >
+                  {formatTel(row.tel)}
+                </a>
+              ) : (
+                row.text
+              )}
             </dd>
           </div>
-        )}
-        {b.openingHours && b.openingHours.length > 0 && (
-          <div>
-            <dt class="sr-only">営業時間</dt>
-            <dd class="m-0">{b.openingHours.join(" · ")}</dd>
-          </div>
-        )}
-        {b.hasMap && (
-          <div>
-            <dt class="sr-only">地図</dt>
-            <dd class="m-0">
-              <a
-                class="tap-target hover:text-link"
-                href={b.hasMap}
-                target="_blank"
-                rel="noopener"
-              >
-                Google マップで見る
-              </a>
-            </dd>
-          </div>
-        )}
+        ))}
       </dl>
     </section>
   )

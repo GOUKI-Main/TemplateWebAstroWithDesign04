@@ -1,0 +1,106 @@
+---
+import { site } from "../content/site";
+import Logo from "./Logo.astro";
+
+// 初回のオープニング。yohaku-koumuten のローダー（格子が閉じて社名が現れ、
+// 幕ごと上へ抜ける）を、テルメの店先に置き換えたもの:
+//   一．紙の地に、黄色と白の日よけ（オーニング）が上から順に降りてくる
+//   二．ロゴがポンと押され、英字の添え書きが出る
+//   三．幕ごと上へ抜けて本編が現れる
+// 動きはすべて CSS の keyframes で、終わると自分で消える（JS が止まっても
+// 閉じ込めない）。JS は「同じ訪問の2ページ目以降は出さない」判定だけで、
+// Base.astro の head にある。動きを減らす設定・JS 無効では出さない。
+const STRIPES = 12;
+---
+
+{
+  site.design.loader && (
+    <div data-loader aria-hidden="true" class="loader">
+      <div class="loader-awning">
+        {Array.from({ length: STRIPES }, (_, i) => (
+          <span
+            class:list={["loader-stripe", i % 2 ? "bg-card" : "bg-sun"]}
+            style={`--i:${i}`}
+          />
+        ))}
+      </div>
+      <div class="loader-mark">
+        <Logo class="h-16 sm:h-20" />
+        <span class="en mt-4 text-[0.7rem] text-muted">Welcome</span>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    background: var(--color-bg);
+    animation: loader-out 0.75s cubic-bezier(0.7, 0, 0.3, 1) 1.65s forwards;
+  }
+  .loader-awning {
+    position: absolute;
+    inset: 0 0 auto;
+    display: flex;
+    height: clamp(5rem, 18dvh, 9rem);
+  }
+  /* 一本ずつ下端が丸い帯 = 日よけの波縁。 */
+  .loader-stripe {
+    flex: 1 1 0;
+    margin-right: -1px;
+    border-radius: 0 0 999px 999px;
+    box-shadow: inset 0 -6px 0 rgba(59, 39, 26, 0.08);
+    transform: translateY(-105%);
+    animation: stripe-in 0.6s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i) * 35ms) forwards;
+  }
+  .loader-mark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.7);
+    animation: mark-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s forwards;
+  }
+  @keyframes stripe-in {
+    to {
+      transform: none;
+    }
+  }
+  @keyframes mark-in {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes loader-out {
+    to {
+      transform: translateY(-100%);
+      visibility: hidden;
+    }
+  }
+
+  /* 2ページ目以降・動きを減らす設定・JS 無効では最初から出さない。 */
+  :global(html.loader-seen) .loader {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loader {
+      display: none;
+    }
+  }
+</style>
+
+<noscript>
+  <style>
+    [data-loader] {
+      display: none;
+    }
+  </style>
+</noscript>
