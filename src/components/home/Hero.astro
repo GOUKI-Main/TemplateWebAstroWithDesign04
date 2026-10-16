@@ -1,0 +1,188 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import sunrays from "../../assets/images/deco/sunrays.webp";
+import stRound from "../../assets/images/deco/st_round.webp";
+import stMelon from "../../assets/images/deco/st_melon.webp";
+import bird from "../../assets/images/deco/bird.webp";
+import tree from "../../assets/images/deco/tree.webp";
+import sparkL from "../../assets/images/deco/spark_l.webp";
+import redrays from "../../assets/images/deco/redrays.webp";
+import tomatoes from "../../assets/images/deco/tomatoes.webp";
+import mountains from "../../assets/images/deco/mountains.webp";
+import hillPath from "../../assets/images/deco/hill_path.webp";
+
+// ヒーロー。左に縦書きの大見出し（一列ずつ筆で書くように現れる）と黄色の
+// リボン、右に店先のイラスト/写真と、ゆれる丸ボタン。周りの装飾イラストは
+// スタンプのようにポンと押される（広い画面のみ）。
+type Props = {
+  /** 縦書きの見出し。1要素 = 1列（右から）。最後の列が赤。1列9字まで。 */
+  lines: string[];
+  /** 見出しの左に立てる黄色のリボン（縦書き、15字前後まで）。 */
+  ribbon?: string;
+  /** 左下に添える欧文（1要素 = 1行）。スマホでは出さない。 */
+  en?: string[];
+  image: ImageMetadata;
+  imageAlt: string;
+  /** 右下の丸ボタン。label は改行（\n）で2行に。 */
+  circle?: { label: string; en?: string; href: string };
+};
+const { lines, ribbon, en, image, imageAlt, circle } = Astro.props;
+const deco = "pointer-events-none absolute hidden lg:block";
+---
+
+<section
+  data-hero
+  class="deco-clip relative flex items-center py-9 sm:py-12 lg:min-h-[calc(100dvh-84px)] lg:py-14"
+>
+  <div
+    class="relative z-[2] mx-auto flex w-full max-w-[1280px] flex-col items-center gap-9 px-[18px] sm:px-7 lg:min-h-[min(82dvh,720px)] lg:flex-row lg:px-[30px]"
+  >
+    <div
+      class="relative z-[3] flex justify-center lg:w-[min(40%,360px)] lg:shrink-0 lg:justify-end"
+    >
+      <Image
+        src={sunrays}
+        alt=""
+        class={`${deco} -top-6 right-1.5 w-[120px] opacity-90`}
+        data-pop
+      />
+      <Image
+        src={stRound}
+        alt=""
+        class={`${deco} -top-1.5 left-0 w-[104px] opacity-90`}
+        data-pop
+      />
+      <Image
+        src={stMelon}
+        alt=""
+        class={`${deco} top-[104px] left-3.5 w-[86px] opacity-90`}
+        data-pop
+      />
+      <Image
+        src={bird}
+        alt=""
+        class={`${deco} anim-sway top-[200px] left-0.5 w-[60px]`}
+        data-pop
+      />
+      <Image
+        src={tree}
+        alt=""
+        class={`${deco} bottom-10 left-0 w-[70px] opacity-85`}
+        data-pop
+      />
+
+      {/* DOM 順は 見出し → リボン → 欧文（読み上げ順）。右から並べる。 */}
+      <div class="relative flex flex-row-reverse gap-3 sm:gap-3.5 lg:gap-1.5">
+        <h1
+          data-ink
+          class="tategaki m-0 font-head text-[38px] leading-[1.17] font-bold tracking-[0.03em] sm:text-[48px] lg:text-[53px]"
+        >
+          {
+            lines.map((line, i) => (
+              <span
+                class:list={["block", i === lines.length - 1 && "text-accent"]}
+              >
+                {line}
+              </span>
+            ))
+          }
+        </h1>
+        {
+          ribbon && (
+            <p
+              data-reveal
+              style="--d:500ms"
+              class="tategaki m-0 self-center rounded-md bg-sun px-[7px] py-3.5 text-[12.5px] leading-[1.9] font-bold tracking-[0.14em] text-fg shadow-[0_5px_12px_rgba(0,0,0,0.1)] sm:px-[9px] sm:py-[18px] sm:text-[15px] sm:tracking-[0.18em]"
+            >
+              {ribbon}
+            </p>
+          )
+        }
+        {
+          en && (
+            <p
+              data-reveal
+              style="--d:800ms"
+              class="m-0 mt-auto hidden self-end font-en text-sm leading-[1.95] tracking-[0.06em] text-muted sm:block"
+            >
+              {en.map((l, i) => (
+                <>
+                  {i > 0 && <br />}
+                  {l}
+                </>
+              ))}
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    <div
+      class="relative z-[1] w-[min(94%,420px)] sm:w-[min(86%,520px)] lg:absolute lg:top-1/2 lg:right-0 lg:w-[min(62%,700px)] lg:-translate-y-1/2"
+    >
+      <Image
+        src={sparkL}
+        alt=""
+        class={`${deco} anim-twinkle top-[30px] -left-[26px] w-[54px]`}
+        data-pop
+      />
+      <Image
+        src={redrays}
+        alt=""
+        class={`${deco} -top-3 right-[34px] z-[4] w-[120px]`}
+        data-pop
+      />
+      <Image
+        src={tomatoes}
+        alt=""
+        class={`${deco} -top-[22px] -right-1.5 z-[3] w-24`}
+        data-pop
+      />
+      <div data-reveal style="--d:250ms">
+        <Image
+          src={image}
+          alt={imageAlt}
+          widths={[420, 700, 1040, 1400]}
+          sizes="(min-width: 1024px) min(62vw, 700px), (min-width: 640px) 520px, 94vw"
+          loading="eager"
+          fetchpriority="high"
+          class="h-auto w-full drop-shadow-[0_18px_26px_rgba(59,39,26,0.22)]"
+        />
+      </div>
+      {
+        circle && (
+          <a
+            href={circle.href}
+            class="anim-bob absolute -right-1 -bottom-3 flex h-[108px] w-[108px] flex-col items-center justify-center rounded-full border-2 border-card bg-sun text-center text-[13px] leading-[1.4] font-bold whitespace-pre-line text-fg no-underline shadow-[0_8px_20px_rgba(0,0,0,0.16)] sm:h-[130px] sm:w-[130px] sm:text-base lg:right-[-14px] lg:bottom-[30px] lg:h-[148px] lg:w-[148px] lg:border-[3px] lg:text-lg"
+          >
+            {circle.label}
+            {circle.en && (
+              <span class="en mt-1 text-[0.5rem] text-muted lg:mt-1.5 lg:text-[0.56rem]">
+                {circle.en}
+              </span>
+            )}
+            <span
+              class="btn-arrow mt-1 h-[18px] w-[18px] bg-fg text-[0.55rem] text-sun lg:h-[22px] lg:w-[22px]"
+              aria-hidden="true"
+            >
+              ▶
+            </span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+  <Image
+    src={mountains}
+    alt=""
+    class={`${deco} bottom-3.5 -left-2.5 z-[1] w-[400px] max-w-[40%] opacity-90`}
+    data-reveal
+  />
+  <Image
+    src={hillPath}
+    alt=""
+    class={`${deco} right-[4%] bottom-2.5 z-[1] w-[230px] max-w-[24%] opacity-90`}
+    data-reveal
+  />
+</section>

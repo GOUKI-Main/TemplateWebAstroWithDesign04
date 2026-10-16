@@ -1,10 +1,13 @@
 ---
 import type { ImageMetadata } from "astro";
+import { Font } from "astro:assets";
 import SEO, { type ArticleMeta } from "../components/SEO.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SkipLink from "../components/SkipLink.astro";
 import Cloudflare from "../components/Cloudflare.astro";
+import Loader from "../components/Loader.astro";
+import MobileBar from "../components/MobileBar.astro";
 // The breadcrumb item shape is owned by the component that renders it, not by
 // the JSON-LD builder that also happens to consume it — so structured data can
 // be removed without breaking the visible trail.
@@ -32,7 +35,6 @@ export type Props = {
   breadcrumbs?: BreadcrumbItem[];
   /** Extra JSON-LD nodes appended to the page @graph (e.g. FAQPage). */
   jsonLd?: JsonLd | JsonLd[];
-  mainCentered?: boolean;
 };
 
 const {
@@ -45,7 +47,6 @@ const {
   article,
   breadcrumbs,
   jsonLd,
-  mainCentered = false,
 } = Astro.props;
 
 // astro.config.mjs always sets `site` (from site.url in site.ts).
@@ -126,21 +127,64 @@ const graph = siteGraph({
       article={article}
       jsonLd={graph}
     />
+    {
+      /* Self-hosted design fonts (astro.config.mjs `fonts`). Only the Latin
+         face is preloaded: the Japanese faces are hundreds of unicode-range
+         slices, and the browser fetching just the slices a page uses beats
+         preloading any of them. */
+    }
+    <Font cssVariable="--font-raw-body" />
+    <Font cssVariable="--font-raw-head" />
+    <Font cssVariable="--font-raw-hand" />
+    <Font cssVariable="--font-raw-en" preload />
     <Cloudflare />
+    {
+      /* Runs before first paint, so nothing flashes:
+         - .js-motion: hide the elements src/scripts/motion.ts will reveal.
+           Only with JS and without a reduced-motion preference.
+         - .loader-seen: skip the opening animation after the first page of a
+           visit. .loader-on (first page) delays the hero's entrance so it
+           plays as the curtain lifts.
+         - Safety net: if the motion script never reports in (blocked, threw),
+           show everything after 4s instead of leaving the page blank. */
+    }
+    <script is:inline define:vars={{ loader: site.design.loader }}>
+      (function () {
+        var root = document.documentElement;
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        root.classList.add("js-motion");
+        setTimeout(function () {
+          if (!root.hasAttribute("data-motion-ready"))
+            root.classList.remove("js-motion");
+        }, 4000);
+        if (!loader) return;
+        try {
+          if (sessionStorage.getItem("seen-loader")) {
+            root.classList.add("loader-seen");
+          } else {
+            sessionStorage.setItem("seen-loader", "1");
+            root.classList.add("loader-on");
+          }
+        } catch (e) {
+          root.classList.add("loader-on");
+        }
+      })();
+    </script>
   </head>
 
   <body class="flex min-h-dvh flex-col bg-bg font-sans text-fg antialiased">
+    <Loader />
     <SkipLink />
     <Header />
-    <main
-      id="main"
-      class:list={[
-        "container-page flex-1 py-10",
-        { "grid place-items-center": mainCentered },
-      ]}
-    >
+    <main id="main" class="flex-1">
       <slot />
     </main>
     <Footer />
+    <MobileBar />
+
+    <script>
+      import { initMotion } from "../scripts/motion";
+      initMotion();
+    </script>
   </body>
 </html>

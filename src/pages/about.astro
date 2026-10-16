@@ -1,25 +1,39 @@
 ---
 import Base from "../layouts/Base.astro";
+import PageHead from "../components/ui/PageHead.astro";
 import BusinessInfo from "../components/BusinessInfo.astro";
+import CtaBand from "../components/ui/CtaBand.astro";
 import { site } from "../content/site";
 
+// ページの雛形。新しいページはこのファイルをコピーして作る:
+//   <Base> + <PageHead>（題・欧文・一文）+ 本文の列（<article class="prose">）
+//   + 締めの <CtaBand>。title はページ名だけ（「| サイト名」は自動で付く）。
 // TODO(setup): Q11 「私たちについて」— 想い・経歴・代表あいさつ・沿革など
 const title = "私たちについて";
 const description = `${site.name}について。私たちの想いと、大切にしていることをご紹介します。`;
 ---
 
 <Base title={title} description={description} canonicalPath="/about">
-  <article class="prose">
-    <h1>{title}</h1>
+  <PageHead
+    title={title}
+    en="About Us"
+    lead={`${site.name}は、〇〇のために〇〇を提供しています。`}
+  />
 
-    <p class="lead">{site.name}は、〇〇のために〇〇を提供しています。</p>
+  <section class="bg-bg py-12 sm:py-16">
+    <div class="container-page">
+      <article class="prose container-read" data-reveal>
+        <h2>私たちの想い</h2>
+        <p>はじめた理由や、お客様に約束していることをここに書きます。</p>
 
-    <h2>私たちの想い</h2>
-    <p>はじめた理由や、お客様に約束していることをここに書きます。</p>
+        <h2>代表あいさつ</h2>
+        <p>{site.author.name}からのメッセージをここに書きます。</p>
 
-    <h2>代表あいさつ</h2>
-    <p>{site.author.name}からのメッセージをここに書きます。</p>
+        <h2>店舗情報</h2>
+        <BusinessInfo showName />
+      </article>
+    </div>
+  </section>
 
-    <BusinessInfo />
-  </article>
+  <CtaBand />
 </Base>

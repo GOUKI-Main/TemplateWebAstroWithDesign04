@@ -1,61 +1,89 @@
 ---
-import { site, type SiteNavItem } from "../content/site";
+import { site } from "../content/site";
 import NavLinks from "./NavLinks.astro";
+import Logo from "./Logo.astro";
 
-const { brand = site.name, nav = site.nav } = Astro.props as {
-  brand?: string;
-  nav?: SiteNavItem[];
-};
+const { nav = site.nav, cta = site.cta } = site;
 ---
 
 {
   /* sticky (not fixed) so the header keeps its own space in the flow — no
-     magic top padding on <main>. bg + z keep scrolled content from showing
-     through, and `sticky` is the positioned ancestor the mobile menu panel
-     anchors to. */
+     magic top padding on <main>. data-header lets motion.ts slide it away
+     while scrolling down (global.css「ヘッダー」); `sticky` is also the
+     positioned ancestor the mobile menu panel anchors to. id="top" is the
+     target of the footer's TOP button. */
 }
-<header class="sticky top-0 z-40 w-full border-b border-border bg-bg">
-  <div class="container-page flex items-center justify-between gap-4 py-4">
-    <a class="tap-target font-bold tracking-tight no-underline" href="/"
-      >{brand}</a
-    >
+<header
+  id="top"
+  data-header
+  class="sticky top-0 z-40 w-full border-b border-border-soft bg-bg/90 backdrop-blur-[6px]"
+>
+  <div
+    class="mx-auto flex h-16 max-w-[1300px] items-center gap-3 px-3.5 sm:px-6 lg:h-[84px] lg:gap-8 lg:px-[30px]"
+  >
+    <a class="tap-target shrink-0" href="/" aria-label={`${site.name} ホーム`}>
+      <Logo class="h-9 lg:h-[50px]" />
+    </a>
+
+    <nav aria-label="主要ナビゲーション" class="ml-auto hidden lg:block">
+      <NavLinks items={nav} />
+    </nav>
 
     {
-      /* One landmark, two renderings: a disclosure on small screens and an
-         inline row from md up. <details> gives an accessible, keyboard-
-         operable menu with zero JavaScript; navigating reloads the page,
-         which closes it. */
-    }
-    <nav aria-label="主要ナビゲーション">
-      <details class="md:hidden">
-        {
-          /* list-none + marker:content-[''] look redundant next to
-             tap-target's `display: inline-flex` (which removes the marker box
-             outright) — they are the fallback if that display is ever
-             overridden, which is cheap insurance for the site's only
-             JavaScript-free navigation control. */
-        }
-        <summary
-          class="tap-target cursor-pointer list-none rounded-lg border border-border px-3 text-sm marker:content-['']"
+      cta && (
+        <a
+          href={cta.href}
+          target={cta.external ? "_blank" : undefined}
+          rel={cta.external ? "noopener" : undefined}
+          class="btn-accent ml-auto px-3.5 py-2 text-[0.78rem] lg:ml-0 lg:px-5 lg:py-3 lg:text-sm"
         >
-          メニュー
+          <span class="flex flex-col items-start leading-tight">
+            {cta.label}
+            {cta.en && (
+              <span class="en text-[0.5rem] font-semibold opacity-85 lg:text-[0.56rem]">
+                {cta.en}
+              </span>
+            )}
+          </span>
+        </a>
+      )
+    }
+
+    {
+      /* Small screens: a <details> disclosure — keyboard-operable, no
+         JavaScript; navigating reloads the page, which closes it. */
+    }
+    <nav
+      aria-label="主要ナビゲーション"
+      class:list={["lg:hidden", !cta && "ml-auto"]}
+    >
+      <details class="group">
+        <summary
+          class="tap-target cursor-pointer list-none rounded-full marker:content-['']"
+          aria-label="メニュー"
+        >
+          <span class="flex w-[26px] flex-col gap-[5px]" aria-hidden="true">
+            <span
+              class="h-0.5 w-full rounded bg-fg transition-transform duration-300 group-open:translate-y-[7px] group-open:rotate-45"
+            ></span>
+            <span
+              class="h-0.5 w-full rounded bg-fg transition-opacity duration-200 group-open:opacity-0"
+            ></span>
+            <span
+              class="h-0.5 w-full rounded bg-fg transition-transform duration-300 group-open:-translate-y-[7px] group-open:-rotate-45"
+            ></span>
+          </span>
         </summary>
         {
           /* max-height so a long nav scrolls inside the panel instead of
-            running off a short (or landscape) phone screen. */
+             running off a short (or landscape) phone screen. */
         }
         <div
-          class="absolute inset-x-0 top-full max-h-[75dvh] overflow-y-auto overscroll-contain border-b border-border bg-bg"
+          class="absolute inset-x-3.5 top-full mt-2 max-h-[75dvh] overflow-y-auto overscroll-contain rounded-2xl border border-border bg-surface px-3 py-2 shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
         >
-          <div class="container-page py-2">
-            <NavLinks items={nav} block />
-          </div>
+          <NavLinks items={cta ? [...nav, cta] : nav} block />
         </div>
       </details>
-
-      <div class="hidden md:block">
-        <NavLinks items={nav} />
-      </div>
     </nav>
   </div>
 </header>

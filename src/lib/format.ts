@@ -22,7 +22,9 @@ const time = (t: string) => t.replace(/^0(\d)/, "$1");
 /** One schema.org openingHours value → Japanese. Anything it does not
  *  recognise is returned unchanged rather than guessed at. */
 export function formatOpeningHours(value: string): string {
-  const m = value.trim().match(/^([A-Za-z,\-\s]+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+  const m = value
+    .trim()
+    .match(/^([A-Za-z,\-\s]+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
   if (!m) return value;
   const [, dayPart, open, close] = m;
   const days = dayPart

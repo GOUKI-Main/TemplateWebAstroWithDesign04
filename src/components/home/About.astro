@@ -1,0 +1,142 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import town from "../../assets/images/deco/town.webp";
+import leaf from "../../assets/images/deco/leaf_l.webp";
+
+// 私たちについて（トップの抜粋）。広い画面では縦書きの見出し + 本文、右に
+// 写真3枚（大1・小2）と丸いスタンプ。写真は幕を上げるように現れる。
+type Props = {
+  /** 見出し。1要素 = 1行（縦書きでは1列）。accent 番目の行が赤。 */
+  lines: string[];
+  accent?: number;
+  body: string[];
+  /** 3枚: 大（左・縦長）、小、小。 */
+  images: { src: ImageMetadata; alt: string }[];
+  /** 写真の角に押す丸スタンプ（「10 / 年以上 / Thank you」）。 */
+  stamp?: { big: string; small: string; en?: string };
+  link?: { label: string; href: string };
+};
+const { lines, accent = 1, body, images, stamp, link } = Astro.props;
+---
+
+<section
+  id="about"
+  class="deco-clip relative bg-bg-2 py-14 sm:py-[74px] sm:pb-20"
+>
+  <Image
+    src={town}
+    alt=""
+    class="pointer-events-none absolute bottom-2 -left-2.5 hidden w-[140px] opacity-55 sm:block"
+  />
+  <div class="container-page">
+    <div class="grid items-center gap-11 lg:grid-cols-[1fr_1.04fr] lg:gap-9">
+      <div
+        class="flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:gap-[30px]"
+      >
+        <h2
+          data-ink
+          class="m-0 text-center font-head text-[28px] leading-[1.4] font-bold tracking-[0.04em] sm:text-[34px] lg:h-[420px] lg:text-left lg:text-[42px] lg:leading-[1.5] lg:tracking-[0.1em] lg:[writing-mode:vertical-rl]"
+        >
+          {
+            lines.map((line, i) => (
+              <span class:list={["block", i === accent && "text-accent"]}>
+                {line}
+              </span>
+            ))
+          }
+        </h2>
+        <div
+          class="max-w-[560px] text-center lg:mt-2.5 lg:max-w-[340px] lg:text-left"
+        >
+          {
+            body.map((p, i) => (
+              <p
+                data-reveal
+                style={`--d:${200 + i * 100}ms`}
+                class="m-0 mb-5 text-[14.5px] leading-[2.1] text-muted"
+              >
+                {p}
+              </p>
+            ))
+          }
+          {
+            link && (
+              <a
+                data-reveal
+                href={link.href}
+                class="btn-line mt-2 text-fg hover:text-link"
+              >
+                {link.label}
+                <span
+                  class="btn-arrow h-5 w-5 text-[0.55rem]"
+                  aria-hidden="true"
+                >
+                  ▶
+                </span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <div
+        class="relative mx-auto grid w-full max-w-[620px] grid-cols-2 gap-3 sm:grid-cols-[1.3fr_1fr] sm:gap-4 lg:max-w-none"
+      >
+        {
+          stamp && (
+            <div
+              data-pop
+              style="--d:600ms"
+              class="absolute -top-7 right-0 z-[4] flex h-[92px] w-[92px] rotate-[8deg] flex-col items-center justify-center rounded-full border-2 border-dashed border-bread bg-card text-center shadow-[0_6px_14px_rgba(0,0,0,0.1)] sm:h-[108px] sm:w-[108px] lg:-right-1.5"
+            >
+              <b class="en text-[22px] leading-none tracking-normal text-link sm:text-[26px]">
+                {stamp.big}
+              </b>
+              <span class="mt-0.5 text-[11px] font-bold text-fg">
+                {stamp.small}
+              </span>
+              {stamp.en && (
+                <small class="mt-0.5 text-[9px] tracking-[0.1em] text-muted">
+                  {stamp.en}
+                </small>
+              )}
+            </div>
+          )
+        }
+        {
+          images.map((img, i) => (
+            <figure
+              data-img-reveal
+              style={`--d:${i * 140}ms`}
+              class:list={[
+                "photo-frame m-0 overflow-hidden",
+                i === 0
+                  ? "row-span-2 min-h-[240px] sm:min-h-[340px]"
+                  : "h-[130px] sm:h-[162px]",
+              ]}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                widths={i === 0 ? [400, 700] : [300, 500]}
+                sizes={
+                  i === 0
+                    ? "(min-width: 1024px) 300px, 55vw"
+                    : "(min-width: 1024px) 220px, 42vw"
+                }
+                class="h-full w-full object-contain"
+              />
+            </figure>
+          ))
+        }
+        <Image
+          src={leaf}
+          alt=""
+          class="pointer-events-none absolute right-[30px] -bottom-2.5 hidden w-[120px] opacity-60 sm:block"
+          data-pop
+        />
+      </div>
+    </div>
+  </div>
+</section>

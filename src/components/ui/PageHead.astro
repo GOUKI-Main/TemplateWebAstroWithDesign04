@@ -1,0 +1,78 @@
+---
+import { Image } from "astro:assets";
+import Breadcrumbs, { type BreadcrumbItem } from "../Breadcrumbs.astro";
+import buntRed from "../../assets/images/deco/bunt_red.webp";
+import buntYellow from "../../assets/images/deco/bunt_yellow.webp";
+import sparkL from "../../assets/images/deco/spark_l.webp";
+import sparkR from "../../assets/images/deco/spark_r.webp";
+
+// 下層ページの頭。ガーランドの下に手書き風の題、欧文の添え字、一文。
+// 下端に点線の罫が左から引かれる。
+type Props = {
+  title: string;
+  en?: string;
+  lead?: string;
+  breadcrumbs?: BreadcrumbItem[];
+};
+const { title, en, lead, breadcrumbs } = Astro.props;
+---
+
+<section class="deco-clip relative bg-bg-2" data-hero>
+  <Image
+    src={sparkL}
+    alt=""
+    class="anim-twinkle absolute top-16 left-[6%] hidden w-11 sm:block"
+    data-pop
+  />
+  <Image
+    src={sparkR}
+    alt=""
+    class="absolute top-10 right-[5%] hidden w-16 opacity-80 sm:block"
+    data-pop
+    style="--d:150ms"
+  />
+  <div class="container-page relative pt-6 pb-12 text-center sm:pb-16">
+    {
+      breadcrumbs && (
+        <div class="text-left">
+          <Breadcrumbs items={breadcrumbs} />
+        </div>
+      )
+    }
+    <div class="mb-6 flex justify-center" aria-hidden="true" data-pop>
+      <Image src={buntRed} alt="" class="h-8 w-auto opacity-90" />
+      <Image src={buntYellow} alt="" class="h-8 w-auto opacity-90" />
+    </div>
+    {
+      en && (
+        <p data-reveal class="en m-0 text-xs text-muted">
+          {en}
+        </p>
+      )
+    }
+    <h1
+      data-reveal
+      style="--d:80ms"
+      class="m-0 mt-3 font-hand text-[1.9rem] leading-snug font-normal tracking-[0.06em] sm:text-[2.6rem]"
+    >
+      {title}
+    </h1>
+    {
+      lead && (
+        <p
+          data-reveal
+          style="--d:160ms"
+          class="mx-auto mt-5 mb-0 max-w-xl text-[0.95rem] text-muted"
+        >
+          {lead}
+        </p>
+      )
+    }
+  </div>
+  <div
+    data-rule
+    class="h-0 border-t-2 border-dashed border-border"
+    aria-hidden="true"
+  >
+  </div>
+</section>

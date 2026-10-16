@@ -1,5 +1,9 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import bird from "../assets/images/deco/bird.webp";
+import tree from "../assets/images/deco/tree.webp";
+import mountains from "../assets/images/deco/mountains.webp";
 
 const title = "ページが見つかりません";
 const description = "お探しのページは存在しません。";
@@ -10,16 +14,41 @@ const description = "お探しのページは存在しません。";
   description={description}
   canonicalPath="/404"
   robots="noindex,nofollow"
-  mainCentered
 >
-  <article class="prose">
-    <h1>404 — ページが見つかりません</h1>
-    <p class="lead">
+  <section
+    data-hero
+    class="deco-clip relative flex min-h-[70dvh] flex-col items-center justify-center px-5 py-16 text-center"
+  >
+    <Image src={bird} alt="" class="anim-sway mb-4 w-16" data-pop />
+    <p
+      class="en m-0 text-[5rem] leading-none font-bold text-accent"
+      data-reveal
+    >
+      404
+    </p>
+    <h1
+      class="m-0 mt-4 font-hand text-[1.6rem] font-normal sm:text-[2rem]"
+      data-reveal
+      style="--d:100ms"
+    >
+      {title}
+    </h1>
+    <p class="mt-3 mb-8 text-muted" data-reveal style="--d:200ms">
       お探しのページは存在しないか、移動された可能性があります。
     </p>
-
-    <p>
-      <a href="/">ホームへ戻る</a>
-    </p>
-  </article>
+    <a href="/" class="btn-pill" data-reveal style="--d:300ms">
+      ホームへ戻る
+      <span class="btn-arrow" aria-hidden="true">▶</span>
+    </a>
+    <Image
+      src={tree}
+      alt=""
+      class="pointer-events-none absolute right-[10%] bottom-6 hidden w-16 opacity-80 sm:block"
+    />
+    <Image
+      src={mountains}
+      alt=""
+      class="pointer-events-none absolute bottom-3 -left-2 hidden w-[360px] max-w-[40%] opacity-80 sm:block"
+    />
+  </section>
 </Base>

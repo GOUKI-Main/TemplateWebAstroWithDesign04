@@ -1,8 +1,28 @@
-# TemplateWebAstro
+# TemplateWebAstro — with design
 
-A boring, production-ready Astro **website template** — HTML-first, ~2 kB of
-runtime JavaScript, and wired for marketing/SEO out of the box. Static pages
-only: there is no blog.
+A production-ready Astro **website template that ships with a finished
+design** — HTML-first, ~3 kB of runtime JavaScript, and wired for
+marketing/SEO out of the box. Static pages only: there is no blog.
+
+## デザイン（日本語）
+
+「まちのお店」デザインが最初から入っています。元は手作りのパン屋のデモサイト
+（pan-terume）で、地域のお店・教室・小さな事業者向けです。
+
+- **見た目** — 生成りの紙の地にこげ茶の文字、差し色は赤と黄。手書き風の見出し
+  （Yomogi）、縦書きの大見出し（Kaisei Decol）、墨線の装飾イラスト、白い台紙の
+  カード、こげ茶のフッター。
+- **トップページ** — ヒーロー（縦書きの見出し + リボン + 店先の写真 + ゆれる丸
+  ボタン）/ 人気の商品（番号付きカード6枚）/ 私たちについて（写真3枚 + スタンプ）
+  / こんなときに（3枚のカード）/ 店舗情報とアクセス / よくある質問 / 締めの帯。
+- **動き** — 余白工務店（yohaku-koumuten）の演出をライブラリなしで再現: 持ち上
+  がって現れる・順に現れる・罫が引かれる・写真が幕から現れる・装飾がポンと押さ
+  れる・縦書きが一列ずつ現れる・下スクロールでヘッダーが隠れる・初回だけ日よけ
+  が降りるオープニング。JS 無効・動きを減らす設定では全部最初から見えます。
+- **スマホ** — 下部に「電話する / お問い合わせ」の常駐バー。
+
+写真とロゴ（`src/assets/images/sample/`）はデザイン確認用の見本です。
+セットアップでお店の写真に差し替えます。
 
 ## Make a site from this template (日本語)
 
@@ -122,12 +142,13 @@ Never put a real secret in this file.
 
 **Performance & a11y**
 
-- ~2 kB of runtime JS (link prefetching only — see [Runtime
-  JavaScript](#runtime-javascript)); system fonts only — no web-font
-  download, no font license to ship
+- ~3 kB of runtime JS (link prefetching + the motion script — see [Runtime
+  JavaScript](#runtime-javascript)); four self-hosted OFL fonts via the Astro
+  Fonts API (no third-party request at view time)
 - Long-term immutable caching for hashed assets (`public/_headers` →
   `/_astro/*`)
-- Dark mode from the OS preference, no toggle and no flash of the wrong theme
+- Light-only by design (the illustrations are ink on paper); motion that
+  respects `prefers-reduced-motion` and never hides content without JS
 - Semantic HTML; skip link; `aria-current` on active nav/crumb; JS-free mobile
   menu (`<details>`); `prefers-reduced-motion` respected
 - Mobile-hardened: no horizontal page scroll at 320px, 44px touch targets on
@@ -189,13 +210,17 @@ Four rules keep it that way — break one and the phone layout goes with it:
 
 ## Runtime JavaScript
 
-One module, ~2.3 kB, on every page: Astro's link prefetcher
-(`prefetch: { prefetchAll: true, defaultStrategy: "hover" }` in
-`astro.config.mjs`). Nothing else ships JS — the mobile menu, the FAQ and dark
-mode are all CSS/HTML.
+Two modules: Astro's link prefetcher (~2.3 kB,
+`prefetch: { prefetchAll: true, defaultStrategy: "hover" }` in
+`astro.config.mjs`) and `src/scripts/motion.ts` (~1 kB — scroll reveals and the
+hide-on-scroll header, built on IntersectionObserver + CSS transitions, no
+GSAP). A few inline lines in `Base.astro`'s `<head>` set the `.js-motion` /
+`.loader-seen` classes before first paint. The mobile menu and the FAQ are
+CSS/HTML; the opening animation is CSS keyframes only.
 
-Delete the `prefetch` block for a strictly zero-JS build, or keep the runtime
-and opt individual links in with `data-astro-prefetch`.
+Content is never hidden without JavaScript: elements are only pre-hidden under
+`.js-motion`, which is not set with JS disabled or reduced motion, and is
+removed again after 4 s if the motion script never runs.
 
 ## Styling (Tailwind 4)
 
@@ -204,23 +229,24 @@ inside an `@theme` block and become **both** CSS variables and utilities:
 
 ```css
 @theme {
-  --color-bg: #fbfbf9; /* -> bg-bg / text-bg / border-bg ... */
-  --color-fg: #1a1a1a;
-  --color-link: #0b3d91;
+  --color-bg: #f4edde; /* -> bg-bg / text-bg / border-bg ... */
+  --color-fg: #3b271a;
+  --color-link: #b8381f;
 }
 ```
 
-**Use only these tokens** (`bg-bg`, `text-fg`, `text-muted`, `border-border`,
-`bg-surface`, `text-link`). A raw hex or a stock Tailwind color like
-`text-gray-700` will not follow dark mode.
+**Use only these tokens** (surfaces `bg` `bg-2` `surface` `card` `deep`; text
+`fg` `muted` `link` `on-deep` `on-deep-muted`; accents `accent` `sun` `bread`
+`leaf`; rules `border` `border-soft`). A raw hex or a stock Tailwind color like
+`text-gray-700` will not follow a palette change. Shared parts are utilities
+too: `btn-pill`, `btn-accent`, `btn-line`, `btn-arrow`, `card`,
+`photo-frame`, `lift`, `en`, `tategaki`, `deco-clip`.
 
-### Dark mode
+### No dark mode
 
-Driven purely by `prefers-color-scheme`: the media query redefines the same
-`--color-*` variables, so every utility re-themes at once. No toggle, no
-`localStorage`, no inline script, and therefore no flash of the wrong theme.
-`<meta name="theme-color">` is emitted twice (light/dark) from
-`site.seo.themeColor` / `themeColorDark` — keep those in sync with `--color-bg`.
+Deliberately light-only (`color-scheme: light`): the decorative illustrations
+are dark ink lines drawn for a paper-colored background and disappear on a dark
+one. `<meta name="theme-color">` is emitted once from `site.seo.themeColor`.
 
 ### Page copy
 
@@ -231,27 +257,32 @@ themes. Preflight replaces a hand-written reset.
 
 ## 日本語フォント
 
-No web font is bundled: `--font-sans` in `global.css` is a system stack
-(`Hiragino Sans`, `Noto Sans JP`, `Yu Gothic`, `Meiryo`, …), so there is
-nothing to download and no font license to distribute. If typography must be
-identical across devices, add a font through Astro's Fonts API (`fonts` in
-`astro.config.mjs` + `<Font>` in `SEO.astro`) and ship its license file
-(e.g. SIL OFL) next to the font files.
+Four faces via the Astro Fonts API (`fonts` in `astro.config.mjs`, `<Font>` in
+`Base.astro`): Zen Kaku Gothic Antique (body), Kaisei Decol (display), Yomogi
+(hand-written headings), Josefin Sans (English labels). They are downloaded
+from Google Fonts **at build time** and served from the site itself; Japanese
+faces are split into unicode-range subsets so a page fetches only the glyphs it
+uses. All are SIL OFL 1.1 — see [`LICENSE-FONTS.md`](LICENSE-FONTS.md).
 
 ## Project structure
 
 ```
 src/
-├─ components/   Header, NavLinks, Footer, SEO, SkipLink, Cloudflare,
-│                Breadcrumbs, FAQ, BusinessInfo
+├─ components/   Header, NavLinks, Logo, Footer, MobileBar, Loader, SEO,
+│                SkipLink, Cloudflare, Breadcrumbs, FAQ, BusinessInfo
+│  ├─ home/      Hero, Items, About, Scenes, Info (top-page sections)
+│  └─ ui/        SectionHead, PageHead, CtaBand
 ├─ content/      site.ts (config)
 ├─ layouts/      Base.astro (head + JSON-LD graph + shell)
 ├─ lib/          seo/jsonld.ts (graph builders), noindex.ts (path match
-│                shared by meta robots + sitemap) — each with a *.test.ts
+│                shared by meta robots + sitemap), format.ts (hours / phone
+│                display) — each with a *.test.ts
+├─ scripts/      motion.ts (scroll reveals, header)
 ├─ pages/        index, about, contact, legal, 404,
 │                robots.txt, site.webmanifest
-├─ assets/       fonts/ (and images/ for your photos — optimized at build)
-└─ styles/       global.css (@theme tokens, dark mode, prose bindings)
+├─ assets/       images/deco (illustrations), images/sample (placeholder
+│                photos + logo — replace at setup)
+└─ styles/       global.css (@theme tokens, parts, motion, prose bindings)
 
 scripts/         check-links.mjs (internal link check over dist/),
                  check-setup.mjs (template placeholders left),

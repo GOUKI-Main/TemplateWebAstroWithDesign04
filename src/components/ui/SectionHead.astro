@@ -1,0 +1,30 @@
+---
+// 節の見出し。手書き風の和文 + 下に小さな欧文（人気のパン / POPULAR BREADS）。
+// 見出しと添え字は順に持ち上がって現れる。
+type Props = {
+  heading: string;
+  en?: string;
+  id?: string;
+  /** 見出しの上に飾る小さなイラスト（ガーランドなど）。 */
+  class?: string;
+};
+const { heading, en, id, class: className } = Astro.props;
+---
+
+<div class:list={["relative mb-9 text-center sm:mb-12", className]}>
+  <slot name="deco" />
+  <h2
+    id={id}
+    data-reveal
+    class="m-0 font-hand text-[1.6rem] leading-snug font-normal tracking-[0.06em] sm:text-[2.1rem]"
+  >
+    {heading}
+  </h2>
+  {
+    en && (
+      <p data-reveal style="--d:90ms" class="en m-0 mt-2 text-xs text-muted">
+        {en}
+      </p>
+    )
+  }
+</div>

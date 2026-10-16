@@ -1,45 +1,164 @@
 ---
 import Base from "../layouts/Base.astro";
 import { site } from "../content/site";
+import Hero from "../components/home/Hero.astro";
+import Items from "../components/home/Items.astro";
+import About from "../components/home/About.astro";
+import Scenes from "../components/home/Scenes.astro";
+import Info from "../components/home/Info.astro";
 import FAQ from "../components/FAQ.astro";
+import CtaBand from "../components/ui/CtaBand.astro";
 
-// TODO(setup): Q11 トップページ — 強み3つ / 提供内容 / 行動喚起（CTA）
+// TODO(setup): Q10 写真 — src/assets/images/sample/ はデザイン確認用の見本。
+// お店の写真を src/assets/images/ に置き、下の import を差し替える
+// （透過PNG/WebPだと台紙の上に浮いて見える。普通の写真でもそのまま使える）。
+import heroImg from "../assets/images/sample/hero.webp";
+import item1 from "../assets/images/sample/item-1.webp";
+import item2 from "../assets/images/sample/item-2.webp";
+import item3 from "../assets/images/sample/item-3.webp";
+import item4 from "../assets/images/sample/item-4.webp";
+import item5 from "../assets/images/sample/item-5.webp";
+import item6 from "../assets/images/sample/item-6.webp";
+import aboutMain from "../assets/images/sample/about-main.webp";
+import aboutSub1 from "../assets/images/sample/about-sub-1.webp";
+import aboutSub2 from "../assets/images/sample/about-sub-2.webp";
+import scene1 from "../assets/images/sample/scene-1.webp";
+import scene2 from "../assets/images/sample/scene-2.webp";
+import scene3 from "../assets/images/sample/scene-3.webp";
+import storefront from "../assets/images/sample/storefront.webp";
+// 装飾アイコン（差し替え不要。業種に合わなければ外してよい）
+import iconBun from "../assets/images/deco/i_bun.webp";
+import iconLoaf from "../assets/images/deco/i_loaf.webp";
+import iconCroissant from "../assets/images/deco/i_croissant.webp";
+
+// TODO(setup): Q3 ヒーロー — 縦書きの見出し（1要素=1列、1列9字まで、最後の列が赤）と
+// リボンの一言。site.tagline を2列に割って書くのが基本。
+const hero = {
+  lines: ["毎日よりどり", "町のしあわせ屋"],
+  ribbon: "できたての笑顔をお届けします",
+  en: [
+    "Freshly made,",
+    "with a smile.",
+    "A little happiness",
+    "for every day.",
+  ],
+  image: heroImg,
+  imageAlt: "お店の外観（見本のイラスト）",
+  circle: {
+    label: "人気の商品を\nチェック！",
+    en: "View Items",
+    href: "#items",
+  },
+};
+
+// TODO(setup): Q11 トップページ — 提供しているもの（商品・メニュー6点が基本）
+const items = [
+  {
+    name: "商品名1",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item1,
+  },
+  {
+    name: "商品名2",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item2,
+  },
+  {
+    name: "商品名3",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item3,
+  },
+  {
+    name: "商品名4",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item4,
+  },
+  {
+    name: "商品名5",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item5,
+  },
+  {
+    name: "商品名6",
+    desc: "ひとことの説明を、30字くらいで書きます。",
+    image: item6,
+  },
+];
+
+// TODO(setup): Q11 トップページ — 私たちについて（見出し3行と本文2段落）
+const about = {
+  lines: ["〇〇の", "くらしに寄り添う", "まちのお店です"],
+  body: [
+    `${site.name}は、〇〇のこの町で、毎日ひとつひとつ心をこめて〇〇をつくっています。`,
+    "地元のみなさまの毎日にも、旅で訪れた方の思い出にも、そっと寄り添うお店でありたいと願っています。",
+  ],
+  images: [
+    { src: aboutMain, alt: "店頭に並ぶ商品（見本）" },
+    { src: aboutSub1, alt: "仕込みをするスタッフ（見本）" },
+    { src: aboutSub2, alt: "店内の棚（見本）" },
+  ],
+  // 実績の数字は利用者から聞いたものだけ。無ければ stamp ごと消す。
+  stamp: { big: "〇〇", small: "年以上", en: "Thank you" },
+};
+
+// TODO(setup): Q11 トップページ — 選ばれる理由 / 利用シーン（3つ）
+const scenes = [
+  {
+    icon: iconBun,
+    title: "強み・シーン1",
+    desc: "お客様にとってうれしいことを、60字くらいで具体的に書きます。どんな時に・誰に向いているか。",
+    image: scene1,
+    alt: "シーン1の写真（見本）",
+  },
+  {
+    icon: iconLoaf,
+    title: "強み・シーン2",
+    desc: "お客様にとってうれしいことを、60字くらいで具体的に書きます。どんな時に・誰に向いているか。",
+    image: scene2,
+    alt: "シーン2の写真（見本）",
+  },
+  {
+    icon: iconCroissant,
+    title: "強み・シーン3",
+    desc: "お客様にとってうれしいことを、60字くらいで具体的に書きます。どんな時に・誰に向いているか。",
+    image: scene3,
+    alt: "シーン3の写真（見本）",
+  },
+];
+
 // TODO(setup): Q12 よくある質問（不要なら FAQ ごと削除）
 const faqs = [
-  {
-    q: "よくある質問1",
-    a: "回答をここに書きます。",
-  },
-  {
-    q: "よくある質問2",
-    a: "回答をここに書きます。",
-  },
+  { q: "よくある質問1", a: "回答をここに書きます。" },
+  { q: "よくある質問2", a: "回答をここに書きます。" },
+  { q: "よくある質問3", a: "回答をここに書きます。" },
 ];
 ---
 
-<Base description={site.description} canonicalPath="/">
-  <article class="prose">
-    <h1>{site.tagline}</h1>
-    <p class="lead">{site.description}</p>
-
-    <section>
-      <h2>選ばれる理由</h2>
-      <ul>
-        <li><strong>強み1</strong> — 具体的な説明。</li>
-        <li><strong>強み2</strong> — 具体的な説明。</li>
-        <li><strong>強み3</strong> — 具体的な説明。</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>提供しているもの</h2>
-      <p>商品・サービス・メニューの概要をここに書きます。</p>
-    </section>
-
-    <p>
-      <a href="/contact">お問い合わせはこちら</a>
-    </p>
-  </article>
-
+<Base
+  description={site.description}
+  canonicalPath="/"
+  ogImageAlt={hero.imageAlt}
+>
+  <Hero {...hero} />
+  <Items
+    heading="人気の商品"
+    en="Popular Items"
+    items={items}
+    link={{ label: "私たちについて", en: "About Us", href: "/about" }}
+  />
+  <About {...about} link={{ label: "もっと見る", href: "/about" }} />
+  <Scenes
+    heading="こんなときに、どうぞ"
+    en="Recommended for You"
+    cards={scenes}
+  />
+  <Info
+    photo={{
+      src: storefront,
+      alt: "お店の外観（見本）",
+      caption: "この看板が目印です",
+    }}
+  />
   <FAQ items={faqs} />
+  <CtaBand />
 </Base>

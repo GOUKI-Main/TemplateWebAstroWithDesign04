@@ -1,49 +1,86 @@
 ---
 import Base from "../layouts/Base.astro";
+import PageHead from "../components/ui/PageHead.astro";
 import BusinessInfo from "../components/BusinessInfo.astro";
 import { site } from "../content/site";
+import { formatTel } from "../lib/format";
 
-// Contact channels all come from site.ts (contactFormUrl, author.email; the
-// phone number is rendered by <BusinessInfo> with the rest of the NAP); this
-// page only decides the order. No form JS is shipped — an external form is a
-// plain link.
+// Contact channels all come from site.ts (contactFormUrl, author.email,
+// business.telephone); this page only decides the order. No form JS is
+// shipped — an external form is a plain link.
 // TODO(setup): Q7 問い合わせ方法の優先順位と、返信の目安などの案内文
 const title = "お問い合わせ";
 const description = `${site.name}へのお問い合わせ方法のご案内です。`;
+const tel = site.business?.telephone;
+
+const channels = [
+  site.contactFormUrl && {
+    label: "フォームから",
+    en: "Form",
+    note: "24時間受け付けています。",
+    action: "お問い合わせフォームを開く",
+    href: site.contactFormUrl,
+    external: true,
+  },
+  tel && {
+    label: "お電話で",
+    en: "Tel",
+    note: "営業時間内にお電話ください。",
+    action: formatTel(tel),
+    href: `tel:${tel}`,
+  },
+  site.author.email && {
+    label: "メールで",
+    en: "Mail",
+    note: "通常2営業日以内にご返信します。",
+    action: site.author.email,
+    href: `mailto:${site.author.email}`,
+  },
+].filter(Boolean) as {
+  label: string;
+  en: string;
+  note: string;
+  action: string;
+  href: string;
+  external?: boolean;
+}[];
 ---
 
 <Base title={title} description={description} canonicalPath="/contact">
-  <article class="prose">
-    <h1>{title}</h1>
+  <PageHead
+    title={title}
+    en="Contact"
+    lead="ご質問・ご相談はお気軽にどうぞ。"
+  />
 
-    <p class="lead">
-      ご質問・ご相談はお気軽にどうぞ。通常2営業日以内にご返信します。
-    </p>
+  <section class="bg-bg py-12 sm:py-16">
+    <div class="container-page">
+      <ul
+        class="m-0 mx-auto grid max-w-4xl list-none gap-5 p-0 md:grid-cols-[repeat(auto-fit,minmax(15rem,1fr))]"
+        data-reveal-child
+      >
+        {
+          channels.map((c) => (
+            <li class="card lift flex flex-col items-center px-6 py-8 text-center">
+              <span class="en text-xs text-muted">{c.en}</span>
+              <h2 class="m-0 mt-2 font-hand text-2xl font-normal">{c.label}</h2>
+              <p class="m-0 mt-2 text-sm text-muted">{c.note}</p>
+              <a
+                href={c.href}
+                target={c.external ? "_blank" : undefined}
+                rel={c.external ? "noopener" : undefined}
+                class="btn-accent mt-5"
+              >
+                {c.action}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
 
-    {
-      site.contactFormUrl && (
-        <>
-          <h2>フォームから</h2>
-          <p>
-            <a href={site.contactFormUrl} target="_blank" rel="noopener">
-              お問い合わせフォームを開く
-            </a>
-          </p>
-        </>
-      )
-    }
-
-    {
-      site.author.email && (
-        <>
-          <h2>メールで</h2>
-          <p>
-            <a href={`mailto:${site.author.email}`}>{site.author.email}</a>
-          </p>
-        </>
-      )
-    }
-
-    <BusinessInfo />
-  </article>
+      <div class="container-read mt-14" data-reveal>
+        <BusinessInfo showName />
+      </div>
+    </div>
+  </section>
 </Base>

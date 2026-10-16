@@ -20,6 +20,7 @@ const SELECTOR =
 export function initMotion(): void {
   const root = document.documentElement;
   if (!root.classList.contains("js-motion")) return;
+  root.setAttribute("data-motion-ready", "");
 
   // 順番を振る。子を順に出すもの・一列ずつ出すものは子に、並んだスタンプは
   // 親の中での順に。

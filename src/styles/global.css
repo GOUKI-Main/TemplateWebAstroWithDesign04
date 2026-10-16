@@ -31,7 +31,7 @@
   --color-muted: #68573c; /* 補助文字 6.0:1 on bg */
   --color-link: #b8381f; /* リンク・小さな赤文字・ボタン面 5.0:1 on bg */
   --color-on-deep: #fefefb; /* deep の上の文字 16.7:1 */
-  --color-on-deep-muted: #b9ab95; /* deep の上の補助文字 8.0:1 */
+  --color-on-deep-muted: #b9ab95; /* deep の上の補助文字 7.5:1 */
 
   /* 差し色（装飾と大きな文字だけ。小さな文字には link を使う） */
   --color-accent: #d84a2f; /* 赤。見出しの強調・番号・点 */
@@ -58,8 +58,7 @@
   --font-sans:
     var(--font-raw-body), "Hiragino Sans", "Hiragino Kaku Gothic ProN",
     "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
-  --font-head:
-    var(--font-raw-head), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-head: var(--font-raw-head), "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-hand:
     var(--font-raw-hand), "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
   --font-en: var(--font-raw-en), system-ui, sans-serif;
@@ -379,7 +378,7 @@ html {
   transition:
     opacity 0.9s var(--ease-out-soft),
     transform 0.9s var(--ease-out-soft);
-  transition-delay: calc(var(--i, 0) * 90ms + var(--d, 0ms));
+  transition-delay: calc(var(--i, 0) * 90ms + var(--d, 0ms) + var(--wait, 0ms));
 }
 /* 罫線が左から引かれる。 */
 .js-motion [data-rule] {
@@ -391,7 +390,7 @@ html {
 .js-motion [data-img-reveal] {
   clip-path: inset(0 0 100% 0);
   transition: clip-path 1.15s var(--ease-out-soft);
-  transition-delay: var(--d, 0ms);
+  transition-delay: calc(var(--d, 0ms) + var(--wait, 0ms));
 }
 .js-motion [data-img-reveal] img {
   transform: scale(1.09);
@@ -404,13 +403,22 @@ html {
   transition:
     opacity 0.5s ease,
     transform 0.7s var(--ease-pop);
-  transition-delay: calc(var(--i, 0) * 110ms + var(--d, 0ms));
+  transition-delay: calc(
+    var(--i, 0) * 110ms + var(--d, 0ms) + var(--wait, 0ms)
+  );
 }
 /* 縦書きの大見出し。筆で書くように、上から下へ一列ずつ現れる。 */
 .js-motion [data-ink] > * {
   clip-path: inset(0 0 100% 0);
   transition: clip-path 1.1s cubic-bezier(0.65, 0, 0.35, 1);
-  transition-delay: calc(var(--i, 0) * 260ms + var(--d, 0ms));
+  transition-delay: calc(
+    var(--i, 0) * 260ms + var(--d, 0ms) + var(--wait, 0ms)
+  );
+}
+
+/* 初回ローダーが出るページでは、ヒーローの登場を幕が上がるまで待たせる。 */
+.loader-on [data-hero] {
+  --wait: 1700ms;
 }
 
 .js-motion .is-in[data-reveal],
