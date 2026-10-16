@@ -29,6 +29,7 @@ const testSite: SiteConfig = {
     themeColor: "#fff",
     noindexPaths: [],
   },
+  design: { loader: false, mobileBar: false },
 };
 
 const graphOf = (result: Record<string, unknown>) =>
