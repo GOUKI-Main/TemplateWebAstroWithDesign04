@@ -10,7 +10,9 @@
   //   - 本番ブランチ:   Deploy command = `npx wrangler deploy`(ダッシュボード既定)
   //   - 非本番ブランチ: `npx wrangler versions upload` または `npx wrangler preview`
   //     (プレビューURL→PRコメント。後者は下の "previews" ブロックが必須)
-  //   - Build command = `pnpm build`(出力 ./dist を本ファイルの assets でアップロード)
+  //   - ビルドは下の "build" で wrangler 自身が走らせる(deploy / versions upload /
+  //     dev の前に `pnpm build`)。ダッシュボードの Build command は空のままでよい
+  //     (入れても動くが、ビルドが2回走って遅くなるだけ)
   //   - サイトURL・解析トークン等は src/content/site.ts にコミット済み(ビルド変数は不要)
   //   - wrangler は devDependency 済み(CI が版を固定して使用)
   //  ローカル確認(任意): pnpm build && npx wrangler dev
@@ -54,6 +56,12 @@
     // 例: ["/api/*", "!/api/docs/*"]
     // "run_worker_first": false
   },
+
+  // ── ビルド ────────────────────────────────────────────────────────────────
+  // wrangler deploy の前に必ず Astro をビルドする。これが無いと、ダッシュボードの
+  // Build command が空のとき ./dist が作られず「assets.directory does not exist」
+  // で失敗する。どこから deploy しても同じ結果になるよう、ここを正とする。
+  "build": { "command": "pnpm build" },
 
   // ── プレビュー(Worker Previews) ─────────────────────────────────────────
   // `npx wrangler preview`(非本番ブランチのプレビューデプロイ)は、このブロックが
@@ -178,9 +186,9 @@
   // バージョンメタデータ(デプロイのID/タグをコードから参照)
   // "version_metadata": { "binding": "CF_VERSION_METADATA" },
 
-  // ── ビルド / バンドル(通常は Astro 側でビルドするため不要) ───────────────
-  // wrangler 自前ビルドのフック。Astro は pnpm build を使うので基本不要。
-  // "build": { "command": "pnpm build", "cwd": ".", "watch_dir": "src" },
+  // ── バンドル(通常は Astro 側でビルドするため不要) ────────────────────────
+  // ビルドのフック本体は上の "build"。`wrangler dev` で src の変更を拾わせたい
+  // ときは "watch_dir": "src" を足す。
 
   // バンドル細目(SSR Worker を自前管理する時のみ)。
   // "no_bundle": false,

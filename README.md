@@ -301,7 +301,10 @@ deploy step.
 2. Cloudflare dashboard → **Workers & Pages → Create → Connect to Git** → pick
    the repo (this folder is its own repo, so the build root is the repo root).
 3. Build settings (defaults are fine):
-   - **Build command:** `pnpm build`
+   - **Build command:** leave it empty. `wrangler.jsonc` has
+     `"build": { "command": "pnpm build" }`, so wrangler builds the site itself
+     before every deploy — a missing dashboard build command can no longer
+     cause "The directory specified by assets.directory does not exist".
    - **Deploy command:** `npx wrangler deploy` (production) /
      `npx wrangler versions upload` (other branches → preview URL on the PR)
 4. No build variables are needed — everything comes from `site.ts`. Set
